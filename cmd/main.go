@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
 	"regexp"
 	"time"
 )
@@ -33,13 +34,19 @@ func main() {
 
 	http.HandleFunc("/", handler)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	s := &http.Server{
-		Addr:           ":8080",
+		Addr:           ":" + port,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
+	log.Printf("Serving on port %s", port)
 	log.Fatal(s.ListenAndServe())
 }
 
