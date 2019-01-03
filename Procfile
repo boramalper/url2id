@@ -1,1 +1,1 @@
-“web: go run cmd/main.go”
+web: url2id

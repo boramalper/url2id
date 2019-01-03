@@ -2,12 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/boramalper/url2id/pkg"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/boramalper/url2id/pkg"
 )
 
 func main() {

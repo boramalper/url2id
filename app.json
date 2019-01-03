@@ -1,0 +1,16 @@
+{
+  "name": "url2id",
+  "description": "A service to extract \"standard identifiers\" from a given URL",
+  "keywords": [
+    "url2id",
+    "identifier",
+    "doi",
+    "pmid",
+    "pmcid",
+    "nihms",
+    "ems",
+    "cams"
+  ],
+  "website": "https://github.com/boramalper/url2id",
+  "repository": "https://github.com/boramalper/url2id"
+}
