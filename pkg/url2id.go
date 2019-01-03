@@ -23,7 +23,10 @@ type URL2IDError struct {
 	PrevErr error
 }
 
-var doiRE = regexp.MustCompile(`doi\.org/([^"]+)"`)
+// also see
+// https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+var doiRE1 = regexp.MustCompile(`doi\.org/([^\s"<>]+)"`)
+var doiRE2 = regexp.MustCompile(`(10[.][0-9]{4,}[^\s"/<>]*/[^\s"<>]+)`) // https://stackoverflow.com/a/10300246/4466589
 var pmidRE1 = regexp.MustCompile(`/pubmed/(\d+)"`)
 var pmidRE2 = regexp.MustCompile(`/pmid/(\d+)/?`)
 var pmcidRE = regexp.MustCompile(`(?i)PMC(\d+)`)
@@ -70,7 +73,7 @@ func URL2ID(url_ *url.URL) (*Result, *URL2IDError) {
 	}
 
 	var result Result
-	if matches := doiRE.FindSubmatch(body); matches != nil {
+	if matches := doiRE1.FindSubmatch(body); matches != nil {
 		result.Doi, err = url.QueryUnescape(string(matches[1]))
 		if err != nil {
 			return nil, &URL2IDError{
@@ -78,6 +81,8 @@ func URL2ID(url_ *url.URL) (*Result, *URL2IDError) {
 				PrevErr: nil,
 			}
 		}
+	} else if matches := doiRE2.FindSubmatch(body); matches != nil {
+		result.Doi = string(matches[1])
 	}
 
 	if matches := pmidRE1.FindSubmatch(body); matches != nil {

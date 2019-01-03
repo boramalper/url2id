@@ -61,6 +61,30 @@ var cases = []struct{
 			Doi: "10.2174/138955707780859431",
 		},
 	},
+	{
+		"https://link.springer.com/article/10.1007/BF01197436",
+		Result {
+			Doi: "10.1007/BF01197436",
+		},
+	},
+	{
+		"https://journals.sagepub.com/doi/abs/10.1177/0954407017737901",
+		Result {
+			Doi: "10.1177/0954407017737901",
+		},
+	},
+	{
+		"https://aip.scitation.org/doi/10.1063/1.871778",
+		Result {
+			Doi: "10.1063/1.871778",
+		},
+	},
+	{
+		"https://ajp.psychiatryonline.org/doi/abs/10.1176/appi.ajp.159.3.394",
+		Result {
+			Doi: "10.1176/appi.ajp.159.3.394",
+		},
+	},
 }
 
 func TestCases(t *testing.T) {
