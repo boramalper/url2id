@@ -1,5 +1,5 @@
 # url2id
-A client-side JavaScript library to extract *standard identifiers* from a given URL.
+A Go library + web server to extract *standard identifiers* from a given URL.
 
 Intended for *all* scientific literature *only*.
 
@@ -13,65 +13,38 @@ Intended for *all* scientific literature *only*.
   - CAMSID ([PubMed Central Canada Manuscripts Identifier](http://pubmedcentralcanada.ca/pmcc/static/aboutUs/))
 
 ## High-Level Description
-**url2id** will try matching the supplied URL to one of the patterns in its database to extract an identifier, and then
-it will fetch the web-page referred by `url` and scan it for more identifiers.
+**url2id** will fetch the web-page referred by `url` and scan it for identifiers.
 
 ## Documentation
-**url2id** provides a single `url2id()` function with the following signature:
+For the library, see the source code, it's really short.
 
-`url2id(url, [doFetch], function callback(err, result))`
+The web server will listen on `:8080` by default, but you can change the port by `PORT` environment variable.
 
-- `url` must be either a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String),
-  or a [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL), or a
-  [Location](https://developer.mozilla.org/en-US/docs/Web/API/Location).
-  
-- `doFetch` must be a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-  which if true, will cause the web-page referred by `url` to be fetched and scanned for standard identifiers.
-  
-  True by default.
-  
-- `callback` must be a [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)
-  of type `function (err, result)`, which will be called upon a successful result or an error. The return value is
-  ignored.
-  
-  - `err` is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) that
-    describes the error (including exceptions). `null` if operation was successful.
+Any GET request to `/` with parameter `url` will be responded by a JSON of the following type on success:
     
-  - `result` is an [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) of
-    the following type:
-    
-    ```javascript
-    {
-        doi: "10.1016/j.cub.2012.03.051",
-        pmid: "22521786",
-        pmcid: "PMC3780767",
-        nihmsid: "NIHMS236863",
-        emsid: "EMS48932",
-        camsid: "cams6038"    
-    }
-    ```
-    
-    The keys shall be self-descriptive. Beware that `pmid` does *not* have any alphabetic prefix, whereas `pmcid`,
-    `nihmsid`, `emsid`, and `camsid` do; this is by convention.
-    
-    `null` if operation was unsuccessful.
-
-### Example 
-```javascript
-url2id("https://www.ncbi.nlm.nih.gov/pmc/articles/mid/EMS48932/", function(error, result) {
-    if (error) {
-        console.error("url2id error", error);
-        return;
-    }
-    
-    console.info("DOI:", result.doi);
-    console.info("PMID:", result.pmid);
-    console.info("PMCID:", result.pmcid);
-    console.info("NIHMSID:", result.nihmsid);
-    console.info("EMSID:", result.emsid);
-    console.info("CAMSID:", result.camsid);
-});
+```json
+{
+    "doi": "10.1016/j.cub.2012.03.051",
+    "pmid": "22521786",
+    "pmcid": "PMC3780767",
+    "nihmsid": "NIHMS236863",
+    "emsid": "EMS48932",
+    "camsid": "cams6038"    
+}
 ```
+
+On failure, appropriate HTTP status code will be set (often either 400 or 500), with a high-level error message (details
+will be logged by the server).
+
+Empty keys will be omitted.
+
+## Notice
+**url2id** does *not* rely on the structure of the websites but uses few simple regexes to extract information. This
+makes it resilient to changes (on the websites) in future, fast and also simple, **but it also means that errors are probable**.
+
+DOI extraction seems to be the most reliable of all other standard identifiers, and it's widely supported by variety of
+platforms. Thus it might be wise to fetch the title of the paper using the DOI you have got from **url2id** and
+cross-check (if you are intending to use this in a bibliography software for instance).
 
 ## License
 ISC License, see [LICENSE](./LICENSE).
